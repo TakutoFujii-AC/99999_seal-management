@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# batch scripts temp files
+scripts/batch-*.json
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
