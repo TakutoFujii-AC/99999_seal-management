@@ -8,6 +8,8 @@ CREATE TABLE user_stickers (
   user_id     UUID NOT NULL,
   sticker_id  TEXT NOT NULL,
   count       INTEGER NOT NULL DEFAULT 1 CHECK (count >= 0),
+  favorite    BOOLEAN NOT NULL DEFAULT false,
+  want_next   BOOLEAN NOT NULL DEFAULT false,
   acquired_at TIMESTAMPTZ DEFAULT now(),
   created_at  TIMESTAMPTZ DEFAULT now(),
   updated_at  TIMESTAMPTZ DEFAULT now(),

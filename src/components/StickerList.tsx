@@ -11,12 +11,23 @@ const initialFilter: FilterState = {
   brand: "",
   series: "",
   category: "",
-  rarity: "",
+  genre: "",
+  subGenre: "",
   ownership: "all",
+  marking: "all",
 };
 
 export default function StickerList() {
-  const { getCount, upsertCount, totalOwned, loading } = useUserStickers();
+  const {
+    getCount,
+    upsertCount,
+    isFavorite,
+    isWantNext,
+    toggleFavorite,
+    toggleWantNext,
+    totalOwned,
+    loading,
+  } = useUserStickers();
   const [filter, setFilter] = useState<FilterState>(initialFilter);
 
   const filtered = useMemo(() => {
@@ -26,15 +37,19 @@ export default function StickerList() {
       if (filter.series && s.series !== filter.series) return false;
       if (filter.category && !s.categories.includes(filter.category))
         return false;
-      if (filter.rarity && s.rarity !== filter.rarity) return false;
+      if (filter.genre && s.genre !== filter.genre) return false;
+      if (filter.subGenre && s.subGenre !== filter.subGenre) return false;
 
       const count = getCount(s.id);
       if (filter.ownership === "owned" && count <= 0) return false;
       if (filter.ownership === "unowned" && count > 0) return false;
 
+      if (filter.marking === "favorite" && !isFavorite(s.id)) return false;
+      if (filter.marking === "want_next" && !isWantNext(s.id)) return false;
+
       return true;
     });
-  }, [filter, getCount]);
+  }, [filter, getCount, isFavorite, isWantNext]);
 
   if (loading) {
     return (
@@ -70,10 +85,14 @@ export default function StickerList() {
                 key={sticker.id}
                 sticker={sticker}
                 count={count}
+                favorite={isFavorite(sticker.id)}
+                wantNext={isWantNext(sticker.id)}
                 onIncrement={() => upsertCount(sticker.id, count + 1)}
                 onDecrement={() =>
                   upsertCount(sticker.id, Math.max(0, count - 1))
                 }
+                onToggleFavorite={() => toggleFavorite(sticker.id)}
+                onToggleWantNext={() => toggleWantNext(sticker.id)}
               />
             );
           })}

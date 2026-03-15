@@ -16,6 +16,8 @@ export type UserSticker = {
   user_id: string;
   sticker_id: string;
   count: number;
+  favorite: boolean;
+  want_next: boolean;
   acquired_at: string;
   created_at: string;
   updated_at: string;

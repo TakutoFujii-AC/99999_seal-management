@@ -4,8 +4,8 @@ import {
   brands,
   seriesList,
   categoryMaster,
-  rarityLabels,
-  Rarity,
+  genreMaster,
+  getSubGenresByGenreId,
 } from "@/data/stickers";
 
 export type FilterState = {
@@ -13,8 +13,10 @@ export type FilterState = {
   brand: string;
   series: string;
   category: string;
-  rarity: string;
+  genre: string;
+  subGenre: string;
   ownership: "all" | "owned" | "unowned";
+  marking: "all" | "favorite" | "want_next";
 };
 
 type Props = {
@@ -33,13 +35,19 @@ export default function FilterBar({
   const set = (key: keyof FilterState, value: string) =>
     onChange({ ...filter, [key]: value });
 
+  const subGenres = filter.genre
+    ? getSubGenresByGenreId(filter.genre)
+    : [];
+
   const hasFilter =
     filter.search ||
     filter.brand ||
     filter.series ||
     filter.category ||
-    filter.rarity ||
-    filter.ownership !== "all";
+    filter.genre ||
+    filter.subGenre ||
+    filter.ownership !== "all" ||
+    filter.marking !== "all";
 
   return (
     <div className="sticky top-[44px] z-30 bg-white/90 backdrop-blur-md border-b border-pink-100 px-4 pb-3 pt-3 space-y-2.5">
@@ -109,17 +117,34 @@ export default function FilterBar({
         </select>
 
         <select
-          value={filter.rarity}
-          onChange={(e) => set("rarity", e.target.value)}
+          value={filter.genre}
+          onChange={(e) => {
+            onChange({ ...filter, genre: e.target.value, subGenre: "" });
+          }}
           className="shrink-0 rounded-full border border-pink-200 bg-white px-3 py-1.5 text-xs text-gray-600 focus:border-pink-400"
         >
-          <option value="">💎 レア度</option>
-          {(Object.keys(rarityLabels) as Rarity[]).map((r) => (
-            <option key={r} value={r}>
-              {rarityLabels[r]}
+          <option value="">🏷️ ジャンル</option>
+          {genreMaster.map((g) => (
+            <option key={g.id} value={g.id}>
+              {g.label}
             </option>
           ))}
         </select>
+
+        {subGenres.length > 0 && (
+          <select
+            value={filter.subGenre}
+            onChange={(e) => set("subGenre", e.target.value)}
+            className="shrink-0 rounded-full border border-pink-200 bg-white px-3 py-1.5 text-xs text-gray-600 focus:border-pink-400"
+          >
+            <option value="">📂 サブジャンル</option>
+            {subGenres.map((sg) => (
+              <option key={sg.id} value={sg.id}>
+                {sg.label}
+              </option>
+            ))}
+          </select>
+        )}
 
         <select
           value={filter.ownership}
@@ -129,6 +154,16 @@ export default function FilterBar({
           <option value="all">すべて</option>
           <option value="owned">✅ 持ってる</option>
           <option value="unowned">🔲 持ってない</option>
+        </select>
+
+        <select
+          value={filter.marking}
+          onChange={(e) => set("marking", e.target.value)}
+          className="shrink-0 rounded-full border border-pink-200 bg-white px-3 py-1.5 text-xs text-gray-600 focus:border-pink-400"
+        >
+          <option value="all">マーク</option>
+          <option value="favorite">♡ お気に入り</option>
+          <option value="want_next">★ 次にほしい</option>
         </select>
       </div>
 
@@ -150,8 +185,10 @@ export default function FilterBar({
                 brand: "",
                 series: "",
                 category: "",
-                rarity: "",
+                genre: "",
+                subGenre: "",
                 ownership: "all",
+                marking: "all",
               })
             }
             className="text-pink-400 underline underline-offset-2"

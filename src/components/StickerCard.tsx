@@ -1,20 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { Sticker, rarityLabels, categoryMaster } from "@/data/stickers";
+import { Sticker, categoryMaster } from "@/data/stickers";
 
 type Props = {
   sticker: Sticker;
   count: number;
+  favorite: boolean;
+  wantNext: boolean;
   onIncrement: () => void;
   onDecrement: () => void;
-};
-
-const rarityColor: Record<string, string> = {
-  normal: "bg-gray-100 text-gray-500",
-  rare: "bg-pink-100 text-pink-600",
-  super_rare: "bg-amber-100 text-amber-600",
-  secret: "bg-violet-100 text-violet-600",
+  onToggleFavorite: () => void;
+  onToggleWantNext: () => void;
 };
 
 const brandStyle: Record<string, { bg: string; accent: string }> = {
@@ -47,8 +44,12 @@ const seriesEmoji: Record<string, string> = {
 export default function StickerCard({
   sticker,
   count,
+  favorite,
+  wantNext,
   onIncrement,
   onDecrement,
+  onToggleFavorite,
+  onToggleWantNext,
 }: Props) {
   const [imgError, setImgError] = useState(false);
   const owned = count > 0;
@@ -104,11 +105,6 @@ export default function StickerCard({
           </p>
 
           <div className="flex flex-wrap gap-0.5">
-            <span
-              className={`inline-block rounded-full px-1.5 py-0.5 text-[9px] font-semibold ${rarityColor[sticker.rarity]}`}
-            >
-              {rarityLabels[sticker.rarity]}
-            </span>
             {sticker.categories.slice(0, 2).map((catId) => {
               const cat = categoryMaster.find((c) => c.id === catId);
               return (
@@ -123,7 +119,26 @@ export default function StickerCard({
           </div>
         </div>
 
-        <div className="mt-2 flex items-center justify-between">
+        <div className="mt-1.5 flex items-center justify-center gap-3">
+          <button
+            onClick={onToggleFavorite}
+            className={`text-lg transition-transform active:scale-125 ${
+              favorite ? "text-red-400 drop-shadow-sm" : "text-gray-300"
+            }`}
+          >
+            {favorite ? "♥" : "♡"}
+          </button>
+          <button
+            onClick={onToggleWantNext}
+            className={`text-lg transition-transform active:scale-125 ${
+              wantNext ? "text-amber-400 drop-shadow-sm" : "text-gray-300"
+            }`}
+          >
+            {wantNext ? "★" : "☆"}
+          </button>
+        </div>
+
+        <div className="mt-1.5 flex items-center justify-between">
           <button
             onClick={onDecrement}
             disabled={count <= 0}

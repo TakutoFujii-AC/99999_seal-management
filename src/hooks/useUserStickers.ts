@@ -44,19 +44,24 @@ export function useUserStickers() {
     fetchAll();
   }, [fetchAll]);
 
+  const defaultRow = (stickerId: string): UserSticker => ({
+    id: "",
+    user_id: DEMO_USER_ID,
+    sticker_id: stickerId,
+    count: 0,
+    favorite: false,
+    want_next: false,
+    acquired_at: new Date().toISOString(),
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  });
+
   const upsertCount = useCallback(
     async (stickerId: string, newCount: number) => {
       setStickerMap((prev) => ({
         ...prev,
         [stickerId]: {
-          ...(prev[stickerId] || {
-            id: "",
-            user_id: DEMO_USER_ID,
-            sticker_id: stickerId,
-            acquired_at: new Date().toISOString(),
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          }),
+          ...(prev[stickerId] || defaultRow(stickerId)),
           count: newCount,
         },
       }));
@@ -70,7 +75,10 @@ export function useUserStickers() {
       debounceTimers.current[stickerId] = setTimeout(async () => {
         if (!supabase) return;
 
-        if (newCount <= 0) {
+        const existing = stickerMap[stickerId];
+        const hasMeta = existing?.favorite || existing?.want_next;
+
+        if (newCount <= 0 && !hasMeta) {
           await supabase
             .from("user_stickers")
             .delete()
@@ -96,7 +104,45 @@ export function useUserStickers() {
         }
       }, 400);
     },
-    []
+    [stickerMap]
+  );
+
+  const toggleField = useCallback(
+    async (stickerId: string, field: "favorite" | "want_next") => {
+      const current = stickerMap[stickerId];
+      const newValue = !(current?.[field] ?? false);
+
+      setStickerMap((prev) => ({
+        ...prev,
+        [stickerId]: {
+          ...(prev[stickerId] || defaultRow(stickerId)),
+          [field]: newValue,
+        },
+      }));
+
+      if (!supabase) return;
+
+      const { error } = await supabase.from("user_stickers").upsert(
+        {
+          user_id: DEMO_USER_ID,
+          sticker_id: stickerId,
+          [field]: newValue,
+        },
+        { onConflict: "user_id,sticker_id" }
+      );
+      if (error) console.error(`Failed to toggle ${field}:`, error);
+    },
+    [stickerMap]
+  );
+
+  const toggleFavorite = useCallback(
+    (stickerId: string) => toggleField(stickerId, "favorite"),
+    [toggleField]
+  );
+
+  const toggleWantNext = useCallback(
+    (stickerId: string) => toggleField(stickerId, "want_next"),
+    [toggleField]
   );
 
   const getCount = useCallback(
@@ -104,9 +150,30 @@ export function useUserStickers() {
     [stickerMap]
   );
 
+  const isFavorite = useCallback(
+    (stickerId: string) => stickerMap[stickerId]?.favorite ?? false,
+    [stickerMap]
+  );
+
+  const isWantNext = useCallback(
+    (stickerId: string) => stickerMap[stickerId]?.want_next ?? false,
+    [stickerMap]
+  );
+
   const totalOwned = Object.values(stickerMap).filter(
     (s) => s.count > 0
   ).length;
 
-  return { stickerMap, loading, getCount, upsertCount, totalOwned, fetchAll };
+  return {
+    stickerMap,
+    loading,
+    getCount,
+    upsertCount,
+    isFavorite,
+    isWantNext,
+    toggleFavorite,
+    toggleWantNext,
+    totalOwned,
+    fetchAll,
+  };
 }
