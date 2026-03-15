@@ -7,7 +7,7 @@ CREATE TABLE user_stickers (
   id          UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id     UUID NOT NULL,
   sticker_id  TEXT NOT NULL,
-  count       INTEGER NOT NULL DEFAULT 1 CHECK (count >= 0),
+  count       INTEGER NOT NULL DEFAULT 0 CHECK (count >= 0),
   favorite    BOOLEAN NOT NULL DEFAULT false,
   want_next   BOOLEAN NOT NULL DEFAULT false,
   acquired_at TIMESTAMPTZ DEFAULT now(),

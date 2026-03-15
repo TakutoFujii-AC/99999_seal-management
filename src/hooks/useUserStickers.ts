@@ -122,10 +122,12 @@ export function useUserStickers() {
 
       if (!supabase) return;
 
+      const existing = stickerMap[stickerId];
       const { error } = await supabase.from("user_stickers").upsert(
         {
           user_id: DEMO_USER_ID,
           sticker_id: stickerId,
+          count: existing?.count ?? 0,
           [field]: newValue,
         },
         { onConflict: "user_id,sticker_id" }
