@@ -74,7 +74,7 @@ export default function StickerCard({
             <img
               src={sticker.imagePath}
               alt={sticker.name}
-              className="h-full w-full object-cover"
+              className="h-full w-full object-contain"
               onError={() => setImgError(true)}
             />
           ) : (
