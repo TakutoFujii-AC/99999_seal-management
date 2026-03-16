@@ -43,6 +43,7 @@ export default function StickerList() {
       const count = getCount(s.id);
       if (filter.ownership === "owned" && count <= 0) return false;
       if (filter.ownership === "unowned" && count > 0) return false;
+      if (filter.ownership === "duplicate" && count < 2) return false;
 
       if (filter.marking === "favorite" && !isFavorite(s.id)) return false;
       if (filter.marking === "want_next" && !isWantNext(s.id)) return false;

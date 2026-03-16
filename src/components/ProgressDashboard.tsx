@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { stickers, genreMaster, seriesList } from "@/data/stickers";
+import AchievementBadges from "@/components/AchievementBadges";
 
 type Props = {
   getCount: (id: string) => number;
@@ -121,6 +122,9 @@ export default function ProgressDashboard({ getCount, onClose }: Props) {
 
         {/* スクロール領域 */}
         <div className="flex-1 overflow-y-auto px-5 py-4 space-y-6">
+          {/* 実績バッジ */}
+          <AchievementBadges getCount={getCount} />
+
           {/* ジャンル別 */}
           <section>
             <h3 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-1.5">

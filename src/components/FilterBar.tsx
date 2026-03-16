@@ -15,7 +15,7 @@ export type FilterState = {
   category: string;
   genre: string;
   subGenre: string;
-  ownership: "all" | "owned" | "unowned";
+  ownership: "all" | "owned" | "unowned" | "duplicate";
   marking: "all" | "favorite" | "want_next";
 };
 
@@ -95,6 +95,7 @@ export default function FilterBar({
           <option value="all">すべて</option>
           <option value="owned">✅ 持ってる</option>
           <option value="unowned">🔲 持ってない</option>
+          <option value="duplicate">🔄 ダブり</option>
         </select>
 
         <select
