@@ -92,6 +92,7 @@ export default function AchievementBadges({ getCount }: Props) {
   }));
 
   const unlockedCount = badgeStates.filter((b) => b.unlocked).length;
+  const selected = badgeStates.find((b) => b.id === selectedBadge);
 
   return (
     <section>
@@ -102,58 +103,91 @@ export default function AchievementBadges({ getCount }: Props) {
         {unlockedCount} / {badgeStates.length} 解除済み
       </p>
 
-      {/* Horizontal scrollable row */}
-      <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1">
+      {/* Badge grid */}
+      <div className="grid grid-cols-5 gap-2">
         {badgeStates.map((badge) => (
-          <div
+          <button
             key={badge.id}
-            className="flex flex-col items-center shrink-0 cursor-pointer relative"
             onClick={() =>
               setSelectedBadge(selectedBadge === badge.id ? null : badge.id)
             }
+            className={`flex flex-col items-center gap-1 rounded-2xl p-2 transition-all ${
+              selectedBadge === badge.id
+                ? "bg-pink-100 ring-2 ring-pink-300 scale-105"
+                : badge.unlocked
+                ? "bg-pink-50 hover:bg-pink-100"
+                : "bg-gray-50 hover:bg-gray-100"
+            }`}
           >
             <div
-              className={`w-12 h-12 rounded-full flex items-center justify-center text-xl transition-all ${
+              className={`w-10 h-10 rounded-full flex items-center justify-center text-lg ${
                 badge.unlocked
-                  ? "bg-pink-100 shadow-md"
-                  : "bg-gray-100 grayscale"
+                  ? "bg-gradient-to-br from-pink-200 to-rose-200 shadow-sm"
+                  : "bg-gray-200 grayscale"
               }`}
             >
-              <span style={{ opacity: badge.unlocked ? 1 : 0.3 }}>
+              <span style={{ opacity: badge.unlocked ? 1 : 0.25 }}>
                 {badge.icon}
               </span>
             </div>
             <span
-              className={`text-[10px] mt-1 text-center w-14 leading-tight truncate ${
-                badge.unlocked
-                  ? "text-gray-700 font-medium"
-                  : "text-gray-400"
+              className={`text-[9px] text-center leading-tight line-clamp-2 ${
+                badge.unlocked ? "text-gray-700 font-medium" : "text-gray-400"
               }`}
             >
               {badge.title}
             </span>
-
-            {/* Tooltip */}
-            {selectedBadge === badge.id && (
-              <div className="absolute top-full mt-1 z-10 bg-white border border-gray-200 rounded-xl shadow-lg px-3 py-2 text-center min-w-[140px] max-w-[160px]">
-                <p className="text-xs font-bold text-gray-700">
-                  {badge.title}
-                </p>
-                <p className="text-[10px] text-gray-500 mt-0.5">
-                  {badge.description}
-                </p>
-                <p
-                  className={`text-[10px] font-bold mt-1 ${
-                    badge.unlocked ? "text-pink-500" : "text-gray-400"
-                  }`}
-                >
-                  {badge.unlocked ? "✅ 解除済み" : "🔒 未解除"}
-                </p>
-              </div>
-            )}
-          </div>
+          </button>
         ))}
       </div>
+
+      {/* Detail card */}
+      {selected && (
+        <div
+          className={`mt-3 rounded-2xl p-4 border transition-all ${
+            selected.unlocked
+              ? "bg-gradient-to-r from-pink-50 to-rose-50 border-pink-200"
+              : "bg-gray-50 border-gray-200"
+          }`}
+        >
+          <div className="flex items-center gap-3">
+            <div
+              className={`w-14 h-14 rounded-2xl flex items-center justify-center text-2xl shrink-0 ${
+                selected.unlocked
+                  ? "bg-gradient-to-br from-pink-200 to-rose-300 shadow-md"
+                  : "bg-gray-200 grayscale"
+              }`}
+            >
+              <span style={{ opacity: selected.unlocked ? 1 : 0.3 }}>
+                {selected.icon}
+              </span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p
+                className={`text-sm font-bold ${
+                  selected.unlocked ? "text-gray-800" : "text-gray-500"
+                }`}
+              >
+                {selected.title}
+              </p>
+              <p className="text-xs text-gray-500 mt-0.5">
+                {selected.description}
+              </p>
+              <div className="mt-1.5">
+                {selected.unlocked ? (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-pink-200/60 px-2.5 py-0.5 text-[10px] font-bold text-pink-600">
+                    <span className="text-xs">✨</span> 解除済み
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-gray-200/60 px-2.5 py-0.5 text-[10px] font-bold text-gray-500">
+                    <span className="text-xs">🔒</span> 未解除
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
