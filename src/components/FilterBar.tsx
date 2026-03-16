@@ -16,7 +16,7 @@ export type FilterState = {
   genre: string;
   subGenre: string;
   ownership: "all" | "owned" | "unowned" | "duplicate";
-  marking: "all" | "favorite" | "want_next";
+  marking: "all" | "favorite" | "want_next" | "has_memo";
 };
 
 type Props = {
@@ -85,6 +85,7 @@ export default function FilterBar({
           <option value="all">マーク</option>
           <option value="favorite">♡ お気に入り</option>
           <option value="want_next">★ 次にほしい</option>
+          <option value="has_memo">📝 メモあり</option>
         </select>
 
         <select

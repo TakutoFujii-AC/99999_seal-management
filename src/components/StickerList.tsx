@@ -25,6 +25,9 @@ export default function StickerList() {
     isWantNext,
     toggleFavorite,
     toggleWantNext,
+    getMemo,
+    hasMemoData,
+    updateMemo,
     totalOwned,
     loading,
   } = useUserStickers();
@@ -47,10 +50,11 @@ export default function StickerList() {
 
       if (filter.marking === "favorite" && !isFavorite(s.id)) return false;
       if (filter.marking === "want_next" && !isWantNext(s.id)) return false;
+      if (filter.marking === "has_memo" && !hasMemoData(s.id)) return false;
 
       return true;
     });
-  }, [filter, getCount, isFavorite, isWantNext]);
+  }, [filter, getCount, isFavorite, isWantNext, hasMemoData]);
 
   if (loading) {
     return (
@@ -81,6 +85,7 @@ export default function StickerList() {
         <div className="grid grid-cols-2 gap-2.5 p-3 sm:grid-cols-3">
           {filtered.map((sticker) => {
             const count = getCount(sticker.id);
+            const memo = getMemo(sticker.id);
             return (
               <StickerCard
                 key={sticker.id}
@@ -88,12 +93,18 @@ export default function StickerList() {
                 count={count}
                 favorite={isFavorite(sticker.id)}
                 wantNext={isWantNext(sticker.id)}
+                memoLocation={memo.location}
+                memoNote={memo.note}
+                hasMemo={hasMemoData(sticker.id)}
                 onIncrement={() => upsertCount(sticker.id, count + 1)}
                 onDecrement={() =>
                   upsertCount(sticker.id, Math.max(0, count - 1))
                 }
                 onToggleFavorite={() => toggleFavorite(sticker.id)}
                 onToggleWantNext={() => toggleWantNext(sticker.id)}
+                onSaveMemo={(location, note) =>
+                  updateMemo(sticker.id, location, note)
+                }
               />
             );
           })}

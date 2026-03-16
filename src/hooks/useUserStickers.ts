@@ -51,6 +51,8 @@ export function useUserStickers() {
     count: 0,
     favorite: false,
     want_next: false,
+    memo_location: "",
+    memo_note: "",
     acquired_at: new Date().toISOString(),
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -162,6 +164,51 @@ export function useUserStickers() {
     [stickerMap]
   );
 
+  const getMemo = useCallback(
+    (stickerId: string) => ({
+      location: stickerMap[stickerId]?.memo_location ?? "",
+      note: stickerMap[stickerId]?.memo_note ?? "",
+    }),
+    [stickerMap]
+  );
+
+  const hasMemoData = useCallback(
+    (stickerId: string) => {
+      const s = stickerMap[stickerId];
+      return !!(s?.memo_location || s?.memo_note);
+    },
+    [stickerMap]
+  );
+
+  const updateMemo = useCallback(
+    async (stickerId: string, location: string, note: string) => {
+      setStickerMap((prev) => ({
+        ...prev,
+        [stickerId]: {
+          ...(prev[stickerId] || defaultRow(stickerId)),
+          memo_location: location,
+          memo_note: note,
+        },
+      }));
+
+      if (!supabase) return;
+
+      const existing = stickerMap[stickerId];
+      const { error } = await supabase.from("user_stickers").upsert(
+        {
+          user_id: DEMO_USER_ID,
+          sticker_id: stickerId,
+          count: existing?.count ?? 0,
+          memo_location: location,
+          memo_note: note,
+        },
+        { onConflict: "user_id,sticker_id" }
+      );
+      if (error) console.error("Failed to update memo:", error);
+    },
+    [stickerMap]
+  );
+
   const totalOwned = Object.values(stickerMap).filter(
     (s) => s.count > 0
   ).length;
@@ -175,6 +222,9 @@ export function useUserStickers() {
     isWantNext,
     toggleFavorite,
     toggleWantNext,
+    getMemo,
+    hasMemoData,
+    updateMemo,
     totalOwned,
     fetchAll,
   };

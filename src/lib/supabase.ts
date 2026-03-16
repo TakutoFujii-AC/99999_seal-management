@@ -18,6 +18,8 @@ export type UserSticker = {
   count: number;
   favorite: boolean;
   want_next: boolean;
+  memo_location: string;
+  memo_note: string;
   acquired_at: string;
   created_at: string;
   updated_at: string;

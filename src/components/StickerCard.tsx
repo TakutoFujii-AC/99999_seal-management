@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Sticker, categoryMaster } from "@/data/stickers";
 import ImageModal from "./ImageModal";
 
@@ -9,10 +9,14 @@ type Props = {
   count: number;
   favorite: boolean;
   wantNext: boolean;
+  memoLocation: string;
+  memoNote: string;
+  hasMemo: boolean;
   onIncrement: () => void;
   onDecrement: () => void;
   onToggleFavorite: () => void;
   onToggleWantNext: () => void;
+  onSaveMemo: (location: string, note: string) => void;
 };
 
 const brandStyle: Record<string, { bg: string; accent: string }> = {
@@ -47,16 +51,40 @@ export default function StickerCard({
   count,
   favorite,
   wantNext,
+  memoLocation,
+  memoNote,
+  hasMemo,
   onIncrement,
   onDecrement,
   onToggleFavorite,
   onToggleWantNext,
+  onSaveMemo,
 }: Props) {
   const [imgError, setImgError] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showMemo, setShowMemo] = useState(false);
+  const [editLocation, setEditLocation] = useState(memoLocation);
+  const [editNote, setEditNote] = useState(memoNote);
   const owned = count > 0;
   const style = brandStyle[sticker.brand] ?? { bg: "#f3f4f6", accent: "#6b7280" };
   const emoji = seriesEmoji[sticker.series] ?? "🏷️";
+
+  useEffect(() => {
+    setEditLocation(memoLocation);
+    setEditNote(memoNote);
+  }, [memoLocation, memoNote]);
+
+  const handleSaveMemo = () => {
+    onSaveMemo(editLocation, editNote);
+    setShowMemo(false);
+  };
+
+  const handleDeleteMemo = () => {
+    onSaveMemo("", "");
+    setEditLocation("");
+    setEditNote("");
+    setShowMemo(false);
+  };
 
   return (
     <>
@@ -161,7 +189,80 @@ export default function StickerCard({
             >
               {wantNext ? "★" : "☆"}
             </button>
+            <button
+              onClick={() => setShowMemo(!showMemo)}
+              className={`text-base transition-transform active:scale-125 ${
+                hasMemo ? "text-blue-400 drop-shadow-sm" : "text-gray-300"
+              }`}
+            >
+              📝
+            </button>
           </div>
+
+          {/* メモ展開エリア */}
+          {showMemo && (
+            <div className="mt-2 rounded-xl bg-blue-50/70 border border-blue-100 p-2.5 space-y-2">
+              <div>
+                <label className="text-[10px] font-bold text-blue-400 flex items-center gap-1 mb-0.5">
+                  📍 場所
+                </label>
+                <input
+                  type="text"
+                  value={editLocation}
+                  onChange={(e) => setEditLocation(e.target.value)}
+                  placeholder="渋谷109 1F"
+                  className="w-full rounded-lg border border-blue-200 bg-white px-2 py-1.5 text-[11px] outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 placeholder:text-gray-300"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-bold text-blue-400 flex items-center gap-1 mb-0.5">
+                  💬 メモ
+                </label>
+                <textarea
+                  value={editNote}
+                  onChange={(e) => setEditNote(e.target.value)}
+                  placeholder="在庫多めだった"
+                  rows={2}
+                  className="w-full rounded-lg border border-blue-200 bg-white px-2 py-1.5 text-[11px] outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 resize-none placeholder:text-gray-300"
+                />
+              </div>
+              <div className="flex gap-1.5">
+                <button
+                  onClick={handleSaveMemo}
+                  className="flex-1 rounded-lg bg-blue-400 py-1.5 text-[11px] font-bold text-white active:bg-blue-500 transition"
+                >
+                  保存
+                </button>
+                {hasMemo && (
+                  <button
+                    onClick={handleDeleteMemo}
+                    className="rounded-lg bg-gray-200 px-3 py-1.5 text-[11px] font-bold text-gray-500 active:bg-gray-300 transition"
+                  >
+                    削除
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* メモプレビュー（閉じている時） */}
+          {!showMemo && hasMemo && (
+            <button
+              onClick={() => setShowMemo(true)}
+              className="mt-1.5 w-full rounded-lg bg-blue-50 px-2 py-1 text-left"
+            >
+              {memoLocation && (
+                <p className="text-[10px] text-blue-500 font-medium truncate">
+                  📍 {memoLocation}
+                </p>
+              )}
+              {memoNote && (
+                <p className="text-[10px] text-blue-400 truncate">
+                  💬 {memoNote}
+                </p>
+              )}
+            </button>
+          )}
 
           <div className="mt-1.5 flex items-center justify-between">
             <button
