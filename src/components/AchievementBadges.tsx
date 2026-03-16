@@ -66,12 +66,22 @@ export default function AchievementBadges({ getCount }: Props) {
     },
   ];
 
+  const genreIcons: Record<string, string> = {
+    "heisei-happy-phone": "📱",
+    "petit-doro-sticker": "💧",
+    "cotton-puffy": "☁️",
+    "pitapuku-sticker": "🫧",
+    "uruchuru-pop-seal": "🍬",
+    "ichigoichie": "🌸",
+    "otona-zukan": "📖",
+  };
+
   const genreBadges: Badge[] = genreMaster.map((genre) => {
     const genreStickers = stickers.filter((s) => s.genre === genre.id);
     const genreTotal = genreStickers.length;
     return {
       id: `genre-${genre.id}`,
-      icon: "🏆",
+      icon: genreIcons[genre.id] ?? "🏆",
       title: `${genre.label}マスター`,
       description: `${genre.label}を全種コンプリート`,
       check: () => {
