@@ -93,6 +93,15 @@ export const genreMaster: Genre[] = [
     ],
   },
   {
+    id: "ichigoichie",
+    label: "一期一会",
+    subGenres: [
+      { id: "ichigoichie--seal", label: "シール" },
+      { id: "ichigoichie--sticker-selection", label: "ステッカーセレクション" },
+      { id: "ichigoichie--miniature", label: "ミニチュアステッカー" },
+    ],
+  },
+  {
     id: "otona-zukan",
     label: "大人図鑑　全種",
     subGenres: [
@@ -1318,6 +1327,71 @@ export const stickers: Sticker[] = [
     subGenre: "uruchuru-pop-seal--other-character",
     price: 572,
   },
+
+  // ========================================================
+  // 一期一会（マインドウェイブ）
+  // ========================================================
+  {
+    id: "igi-seal-001",
+    name: "一期一会 友",
+    brand: "マインドウェイブ",
+    series: "MWシール 一期一会",
+    number: 1,
+    imagePath: "/images/stickers/igi-seal-001.jpg",
+    categories: ["character"],
+    genre: "ichigoichie",
+    subGenre: "ichigoichie--seal",
+    price: 275,
+  },
+  {
+    id: "igi-seal-002",
+    name: "一期一会 恋",
+    brand: "マインドウェイブ",
+    series: "MWシール 一期一会",
+    number: 2,
+    imagePath: "/images/stickers/igi-seal-002.jpg",
+    categories: ["character"],
+    genre: "ichigoichie",
+    subGenre: "ichigoichie--seal",
+    price: 275,
+  },
+  {
+    id: "igi-mini-001",
+    name: "一期一会 ミニチュアステッカー",
+    brand: "マインドウェイブ",
+    series: "MWキャラクターミニチュアステッカー",
+    number: 1,
+    imagePath: "/images/stickers/igi-mini-001.jpg",
+    categories: ["character"],
+    genre: "ichigoichie",
+    subGenre: "ichigoichie--miniature",
+    price: 275,
+  },
+  {
+    id: "igi-ss-001",
+    name: "一期一会 うちら一生親友",
+    brand: "マインドウェイブ",
+    series: "MWステッカー セレクション 一期一会",
+    number: 1,
+    imagePath: "/images/stickers/igi-ss-001.jpg",
+    categories: ["character", "deco"],
+    genre: "ichigoichie",
+    subGenre: "ichigoichie--sticker-selection",
+    price: 385,
+  },
+  {
+    id: "igi-ss-002",
+    name: "一期一会 おまもり",
+    brand: "マインドウェイブ",
+    series: "MWステッカー セレクション 一期一会",
+    number: 2,
+    imagePath: "/images/stickers/igi-ss-002.jpg",
+    categories: ["character"],
+    genre: "ichigoichie",
+    subGenre: "ichigoichie--sticker-selection",
+    price: 385,
+  },
+
   {
     id: "oz-001",
     name: "パン",
