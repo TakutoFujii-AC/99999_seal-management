@@ -78,9 +78,29 @@ export default function FilterBar({
       {/* フィルタチップ */}
       <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
         <select
+          value={filter.marking}
+          onChange={(e) => set("marking", e.target.value)}
+          className="w-[7.5rem] shrink-0 rounded-full border border-pink-200 bg-white px-3 py-1.5 text-xs text-gray-600 focus:border-pink-400"
+        >
+          <option value="all">マーク</option>
+          <option value="favorite">♡ お気に入り</option>
+          <option value="want_next">★ 次にほしい</option>
+        </select>
+
+        <select
+          value={filter.ownership}
+          onChange={(e) => set("ownership", e.target.value)}
+          className="w-[7.5rem] shrink-0 rounded-full border border-pink-200 bg-white px-3 py-1.5 text-xs text-gray-600 focus:border-pink-400"
+        >
+          <option value="all">すべて</option>
+          <option value="owned">✅ 持ってる</option>
+          <option value="unowned">🔲 持ってない</option>
+        </select>
+
+        <select
           value={filter.brand}
           onChange={(e) => set("brand", e.target.value)}
-          className="shrink-0 rounded-full border border-pink-200 bg-white px-3 py-1.5 text-xs text-gray-600 focus:border-pink-400"
+          className="w-[7.5rem] shrink-0 rounded-full border border-pink-200 bg-white px-3 py-1.5 text-xs text-gray-600 focus:border-pink-400"
         >
           <option value="">🏷️ ブランド</option>
           {brands.map((b) => (
@@ -93,7 +113,7 @@ export default function FilterBar({
         <select
           value={filter.series}
           onChange={(e) => set("series", e.target.value)}
-          className="shrink-0 rounded-full border border-pink-200 bg-white px-3 py-1.5 text-xs text-gray-600 focus:border-pink-400"
+          className="w-[7.5rem] shrink-0 rounded-full border border-pink-200 bg-white px-3 py-1.5 text-xs text-gray-600 focus:border-pink-400"
         >
           <option value="">📚 シリーズ</option>
           {seriesList.map((s) => (
@@ -106,7 +126,7 @@ export default function FilterBar({
         <select
           value={filter.category}
           onChange={(e) => set("category", e.target.value)}
-          className="shrink-0 rounded-full border border-pink-200 bg-white px-3 py-1.5 text-xs text-gray-600 focus:border-pink-400"
+          className="w-[7.5rem] shrink-0 rounded-full border border-pink-200 bg-white px-3 py-1.5 text-xs text-gray-600 focus:border-pink-400"
         >
           <option value="">🎀 カテゴリ</option>
           {categoryMaster.map((c) => (
@@ -121,7 +141,7 @@ export default function FilterBar({
           onChange={(e) => {
             onChange({ ...filter, genre: e.target.value, subGenre: "" });
           }}
-          className="shrink-0 rounded-full border border-pink-200 bg-white px-3 py-1.5 text-xs text-gray-600 focus:border-pink-400"
+          className="w-[7.5rem] shrink-0 rounded-full border border-pink-200 bg-white px-3 py-1.5 text-xs text-gray-600 focus:border-pink-400"
         >
           <option value="">🏷️ ジャンル</option>
           {genreMaster.map((g) => (
@@ -135,7 +155,7 @@ export default function FilterBar({
           <select
             value={filter.subGenre}
             onChange={(e) => set("subGenre", e.target.value)}
-            className="shrink-0 rounded-full border border-pink-200 bg-white px-3 py-1.5 text-xs text-gray-600 focus:border-pink-400"
+            className="w-[7.5rem] shrink-0 rounded-full border border-pink-200 bg-white px-3 py-1.5 text-xs text-gray-600 focus:border-pink-400"
           >
             <option value="">📂 サブジャンル</option>
             {subGenres.map((sg) => (
@@ -145,26 +165,6 @@ export default function FilterBar({
             ))}
           </select>
         )}
-
-        <select
-          value={filter.ownership}
-          onChange={(e) => set("ownership", e.target.value)}
-          className="shrink-0 rounded-full border border-pink-200 bg-white px-3 py-1.5 text-xs text-gray-600 focus:border-pink-400"
-        >
-          <option value="all">すべて</option>
-          <option value="owned">✅ 持ってる</option>
-          <option value="unowned">🔲 持ってない</option>
-        </select>
-
-        <select
-          value={filter.marking}
-          onChange={(e) => set("marking", e.target.value)}
-          className="shrink-0 rounded-full border border-pink-200 bg-white px-3 py-1.5 text-xs text-gray-600 focus:border-pink-400"
-        >
-          <option value="all">マーク</option>
-          <option value="favorite">♡ お気に入り</option>
-          <option value="want_next">★ 次にほしい</option>
-        </select>
       </div>
 
       {/* 統計 & リセット */}
