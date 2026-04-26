@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { stickers, genreMaster } from "@/data/stickers";
+import { stickers, genreMaster, categoryMaster } from "@/data/stickers";
 
 type Props = {
   getCount: (id: string) => number;
@@ -51,11 +51,53 @@ export default function AchievementBadges({ getCount }: Props) {
       check: (owned) => owned >= 100,
     },
     {
+      id: "collector-200",
+      icon: "🎖️",
+      title: "シールハンター",
+      description: "200種類のシールを集めた",
+      check: (owned) => owned >= 200,
+    },
+    {
+      id: "collector-300",
+      icon: "🥇",
+      title: "シールマエストロ",
+      description: "300種類のシールを集めた",
+      check: (owned) => owned >= 300,
+    },
+    {
+      id: "collector-400",
+      icon: "🏵️",
+      title: "シール伝説",
+      description: "400種類のシールを集めた",
+      check: (owned) => owned >= 400,
+    },
+    {
+      id: "collector-450",
+      icon: "💎",
+      title: "シール覇王",
+      description: "450種類のシールを集めた",
+      check: (owned) => owned >= 450,
+    },
+    {
+      id: "quarter-complete",
+      icon: "🎯",
+      title: "クォーター",
+      description: "全体の25%を達成",
+      check: (owned, total) => total > 0 && owned >= total / 4,
+    },
+    {
       id: "half-complete",
       icon: "🎯",
       title: "ハーフウェイ",
       description: "全体の50%を達成",
-      check: (owned, total) => owned >= total / 2,
+      check: (owned, total) => total > 0 && owned >= total / 2,
+    },
+    {
+      id: "three-quarter-complete",
+      icon: "🎯",
+      title: "スリークォーター",
+      description: "全体の75%を達成",
+      check: (owned, total) => total > 0 && owned >= (total * 3) / 4,
     },
     {
       id: "full-complete",
@@ -94,7 +136,112 @@ export default function AchievementBadges({ getCount }: Props) {
     };
   });
 
-  const allBadges = [...baseBadges, ...genreBadges];
+  const categoryBadges: Badge[] = categoryMaster.map((cat) => {
+    const catStickers = stickers.filter((s) => s.categories.includes(cat.id));
+    const catTotal = catStickers.length;
+    return {
+      id: `cat-${cat.id}`,
+      icon: cat.emoji,
+      title: `${cat.label}マスター`,
+      description: `${cat.label}を全種コンプリート`,
+      check: () => {
+        if (catTotal === 0) return false;
+        const catOwned = catStickers.filter(
+          (s) => getCount(s.id) > 0
+        ).length;
+        return catOwned === catTotal;
+      },
+    };
+  });
+
+  const brandIcons: Record<string, string> = {
+    サンリオ: "🎀",
+    カミオジャパン: "📖",
+    クーリア: "💧",
+    クラックス: "🍬",
+    ディズニー: "🏰",
+    ピーナッツ: "🐶",
+    ちいかわ: "🌸",
+    たまごっち: "🥚",
+    しずくちゃん: "💦",
+    すみっコぐらし: "🐧",
+    コウペンちゃん: "🐤",
+  };
+
+  const brandList = Array.from(new Set(stickers.map((s) => s.brand)));
+  const brandBadges: Badge[] = brandList.map((brand) => {
+    const brandStickers = stickers.filter((s) => s.brand === brand);
+    const brandTotal = brandStickers.length;
+    return {
+      id: `brand-${brand}`,
+      icon: brandIcons[brand] ?? "🏷️",
+      title: `${brand}マスター`,
+      description: `${brand}のシールを全種コンプリート`,
+      check: () => {
+        if (brandTotal === 0) return false;
+        const brandOwned = brandStickers.filter(
+          (s) => getCount(s.id) > 0
+        ).length;
+        return brandOwned === brandTotal;
+      },
+    };
+  });
+
+  const seriesList = Array.from(new Set(stickers.map((s) => s.series)));
+  const completedSeriesCount = seriesList.filter((series) => {
+    const seriesStickers = stickers.filter((s) => s.series === series);
+    return (
+      seriesStickers.length > 0 &&
+      seriesStickers.every((s) => getCount(s.id) > 0)
+    );
+  }).length;
+
+  const seriesAchievementBadges: Badge[] = [
+    {
+      id: "series-1",
+      icon: "🎉",
+      title: "初めてのコンプリート",
+      description: "1シリーズをコンプリート",
+      check: () => completedSeriesCount >= 1,
+    },
+    {
+      id: "series-5",
+      icon: "🏅",
+      title: "シリーズコレクター",
+      description: "5シリーズをコンプリート",
+      check: () => completedSeriesCount >= 5,
+    },
+    {
+      id: "series-10",
+      icon: "🏆",
+      title: "シリーズマスター",
+      description: "10シリーズをコンプリート",
+      check: () => completedSeriesCount >= 10,
+    },
+    {
+      id: "series-20",
+      icon: "🎊",
+      title: "シリーズ達人",
+      description: "20シリーズをコンプリート",
+      check: () => completedSeriesCount >= 20,
+    },
+    {
+      id: "series-all",
+      icon: "⚜️",
+      title: "全シリーズ制覇",
+      description: `全${seriesList.length}シリーズをコンプリート`,
+      check: () =>
+        seriesList.length > 0 && completedSeriesCount === seriesList.length,
+    },
+  ];
+
+  const allBadges = [
+    ...baseBadges,
+    ...genreBadges,
+    ...categoryBadges,
+    ...brandBadges,
+    ...seriesAchievementBadges,
+  ];
 
   const badgeStates = allBadges.map((badge) => ({
     ...badge,
